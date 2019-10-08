@@ -1,0 +1,160 @@
+---
+title: "Assigment 01"
+author: "Christian Regensius"
+date: "5/10/2019"
+output: 
+  html_document:
+    toc: true
+    toc_depth: 2
+    style: bootstrap.min.css
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Congratulations! You have completed Programming for Data Science course. To provide complete score for your report, you need to submit Learn By Building Module for Programming for Data Science. You'll need submit one project to get the score for this track. The second project option, however is marked as optional.
+
+# Project 1 {.tabset }
+Reproducible Data Science: create R Markdown file to report your business recommendation based on your data. This Rmarkdown combines :
+
+## Task 1
+a. Markdown title, author name, date
+
+## Task 2 
+b. Add formatting styles and hierarchical structure in your markdown (such as add title using # head, subtitle using ##, add tabset, etc)
+
+## Task 3
+c. Data Explanation
+
+
+Data terdiri dari:
+Row.ID = ID baris
+Order.ID = Transaksi data
+Order.Date = Tanggal transaksi
+Ship.Date = Tanggal pengiriman
+Customer.ID = ID Customer
+Segment = kategori customer
+Product.ID = ID produk
+Category = kategori produk
+Sub.Category = sub kategori produk
+Product.Name = nama produk
+Sales = nilai sales sub produk masing-masing transaksi
+Quantity = jumlah produk yang dibeli
+Discount = diskon yang diberikan transaksi
+Profit = profit per transaksi
+
+
+
+## Task 4 
+d. read your data into R
+```{r}
+retail <- read.csv("data_input/retail.csv")
+```
+  
+## Task 5
+e. Step-by-step data transformation code with some expalanatory text (contain 'chunk' and also the markdown)
+
+Cek summary isi data, untuk mendapatkan sense awal tentang data yang sudah dibaca.
+```{r}
+summary(retail)
+```
+
+Sekilas cek beberapa data untuk menambah pemahaman kita terhadap data yang kita baca
+```{r}
+head(retail)
+```
+
+
+
+Cek tipe data apakah sudah sesuai dengan data yang ada atau belum.
+```{r}
+str(retail)
+```
+
+Dari data yang dibaca dinilai beberapa tidak sesuai tipe datanya, dengan penjelasan sebagai berikut:
+1. Data order.ID merupakan informasi untuk mengidentifikasi order. Hasil read mengidentifikasi order.ID sebagai factor, dimana order.ID ini tidak bersifat kategorikal dan juga tidak bersifat data kategorikal yang terurut. Oleh karena itu, lebih tepat untuk menyesuaikan data ini menjadi tipe data character.
+2. Data order.date merupakan informasi untuk mengidentifikasi tanggal order. Hasil read mengidentifikasi order.date sebagai factor, dimana order.date ini menyimpan informasi tanggal. Oleh karena itu, lebih tepat untuk menyesuaikan data ini menjadi tipe data date.
+3. Data ship.date merupakan informasi untuk mengidentifikasi tanggal pengiriman . Hasil read mengidentifikasi ship.date sebagai factor, dimana ship.date ini menyimpan informasi tanggal. Oleh karena itu, lebih tepat untuk menyesuaikan data ini menjadi tipe data date.
+4. Data produk.ID merupakan informasi untuk mengidentifikasi produk. Hasil read mengidentifikasi produk.ID sebagai factor, dimana produk.ID ini tidak bersifat kategorikal dan juga tidak bersifat data kategorikal yang terurut. Oleh karena itu, lebih tepat untuk menyesuaikan data ini menjadi tipe data character.
+
+
+
+Sesuaikan masing-masing kolom dengan tipe data yang dinilai lebih tepat, antara lain seperti berikut:
+
+1. Mengubah order ID menjadi karakter.
+```{r}
+retail$Order.ID <- as.character(retail$Order.ID)
+```
+
+2. Mengubah order Date menjadi tanggal sesuai format R. Dari data yang dibaca, format tanggalnya yaitu %m/%d/y
+```{r}
+retail$Order.Date <- as.Date(retail$Order.Date, format = "%m/%d/%y")
+```
+
+3. Mengubah ship Date menjadi tanggal sesuai format R. Dari data yang dibaca, format tanggalnya yaitu %m/%d/y
+```{r}
+retail$Ship.Date <- as.Date(retail$Ship.Date, format = "%m/%d/%y")
+```
+
+4. Mengubah produk ID menjadi karakter.
+```{r}
+retail$Product.ID <- as.character(retail$Product.ID)
+```
+
+
+Pastikan bahwa tipe data sudah sesuai
+```{r}
+str(retail)
+```
+
+Cek kembali summary data untuk meningkatkan pemahaman kita terkait data
+```{r}
+summary(retail)
+```
+
+
+## Task 6
+f. Exploratory text and business recommendation based on your own creativity**
+
+```{r}
+
+retail_profit_percent <- retail$Profit
+
+# informasi deskriptif profit
+summary(retail$Profit)
+range(retail$Profit)
+
+# informasi deskriptif sales
+summary(retail$Sales)
+range(retail$Sales)
+
+
+IQR(retail$Profit)
+
+head(retail)
+
+head(retail[retail$Quantity>1,])
+
+master_product <- cbind(retail$Category, retail$Sub.Category , retail$Product,  retail$Product.Name, retail$Sales)
+
+head(master_product)
+
+boxplot(retail_profit_percent)
+
+```
+
+
+
+Office suplies adalah kategori yang profitnya paling tinggi di atas rata-rata? dibanding yang lain. 
+```{r}
+summary(retail)
+
+boxplot(retail$Profit)
+
+hist(retail$Profit)
+
+retail_above_mean <- retail[retail$Profit >= mean(retail$Profit), ]
+tabel_retail_above_mean <- round(prop.table(table(retail_above_mean$Category))*100,2)
+head(tabel_retail_above_mean)
+```
