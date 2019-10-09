@@ -114,47 +114,78 @@ summary(retail)
 ```
 
 
-## Task 6
-f. Exploratory text and business recommendation based on your own creativity**
+# Task 6 - Insight
+Exploratory text and business recommendation based on your own creativity**. Berikut adalah beberapa pertanyaan untuk menggali insight dari data retail.
 
+
+### Bagaimana summary Profit dari data retail?
+```{r}
+# 
+summary(retail$Profit,object = )
+```
+Intepretasi:
+Hasil summary menunjukkan rata-rata profit adalah 28.657 dengan nilai tengah (median) sebesar 28.657. Profit tertinggi adalah 8399.976 dan terendah adalah -6559.978
+
+### Kategori produk apa yang paling banyak dibeli oleh segment Corporate
+```{r}
+# melakukan tabulasi category dan segment
+table(retail$Category, retail$Segment)
+```
+Intepretasi:
+Dari data disimpulkan bahwa segment corporate paling banyak membeli kategori produk "Office Supplies"
+
+
+
+### Kategori produk apa dan segment apa yang menghasilkan profit di atas-rata keseluruhan?
+```{r}
+# men-subset data dengan profit lebih besar dari nilai mean
+profit_above_mean <- retail[retail$Profit > mean(retail$Profit), ]
+
+# membuat tabulasi berdasarkan category dan segment
+table(profit_above_mean$Category, profit_above_mean$Segment)
+```
+Intepretasi:
+Dari tabel di atas disimpulkan bahwa penjualan dengan profit di atas rata-rata paling banyak adalah pada segment consumer dengan produk office supplies.
+
+
+### Bagaimana sebaran profit secara keseluruhan?
 ```{r}
 
 retail_profit_percent <- retail$Profit
 
 # informasi deskriptif profit
 summary(retail$Profit)
+
+#informasi nilai tertinggi dan nilai terendah dari data Profit
 range(retail$Profit)
 
 # informasi deskriptif sales
 summary(retail$Sales)
+
+#informasi nilai tertinggi dan nilai terendah dari data Sales
 range(retail$Sales)
 
+# mengobservasi populasi data profit
+hist(retail$Profit,20)
 
-IQR(retail$Profit)
+# mensubset data dengan profit dengan sample size sebesar 200 data
+sample_retail_profit <- sample(retail$Profit, 200)
 
-head(retail)
-
-head(retail[retail$Quantity>1,])
-
-master_product <- cbind(retail$Category, retail$Sub.Category , retail$Product,  retail$Product.Name, retail$Sales)
-
-head(master_product)
-
-boxplot(retail_profit_percent)
+# mengobservasi distribusi sample profit
+hist(sample_retail_profit, 20)
 
 ```
 
+Intepretasi:
+Berdasarkan perbandingan histogram sample & populasi, bisa disimpulkan bahwa kepadatan data profit mengumpul di sekitar 0. 
 
 
-Office suplies adalah kategori yang profitnya paling tinggi di atas rata-rata? dibanding yang lain. 
+### Segmen & Kategori produk mana dengan profit tertinggi secara keseluruhan?
+
 ```{r}
-summary(retail)
-
-boxplot(retail$Profit)
-
-hist(retail$Profit)
-
-retail_above_mean <- retail[retail$Profit >= mean(retail$Profit), ]
-tabel_retail_above_mean <- round(prop.table(table(retail_above_mean$Category))*100,2)
-head(tabel_retail_above_mean)
+# Membuat tabel yang mentabulasi profit berdasarkan segment dan kategori.
+xtabs(Profit~Segment+Category, retail)
 ```
+
+Intepretasi:
+Berdasarkan tabel di atas, Consumer & Technology berkontribusi terbesar pada profit secara umum.
